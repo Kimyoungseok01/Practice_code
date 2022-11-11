@@ -3,6 +3,7 @@ package jpaStudy.study.Repository;
 import java.util.List;
 import java.util.Optional;
 import jpaStudy.study.Entity.Book;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,5 +1,6 @@
 package com.gangwondog.core.test.common;
 
+import com.gangwondog.core.test.Entity.PlaceEntity;
 import com.gangwondog.core.test.vo.LocalDetailEntity;
 import com.gangwondog.core.test.vo.LocalEntity;
 import java.io.BufferedReader;
@@ -90,7 +91,7 @@ public class Common {
 //      localList.add(localVo);
 //    }
 //  }
-  public List<LocalEntity> getLocation() throws IOException, ParseException {
+  public List<Long> getLocation() throws IOException, ParseException {
     StringBuilder urlBuilder = new StringBuilder(
         "https://www.pettravel.kr/api/listArea.do"); /*URL*/
     urlBuilder.append(
@@ -102,14 +103,14 @@ public class Common {
         "&" + URLEncoder.encode("areaCode", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(location,
             StandardCharsets.UTF_8)); /*지역 코드*/
     URL url = new URL(urlBuilder.toString());
-    System.out.println("url = " + url);
+    //System.out.println("url = " + url);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     conn.setRequestMethod("GET");
     conn.setRequestProperty("Content-type", "application/json");
     conn.setRequestProperty("Accept", "application/json");
     conn.setDoOutput(true);
-    System.out.println(conn.getHeaderFields());
-    System.out.println("Response code: " + conn.getResponseCode());
+    //System.out.println(conn.getHeaderFields());
+    //System.out.println("Response code: " + conn.getResponseCode());
     BufferedReader rd;
     if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
       rd = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
@@ -126,8 +127,8 @@ public class Common {
     sb.deleteCharAt(sb.length() - 1);
     rd.close();
     conn.disconnect();
-    System.out.println("api 값 : " + sb);
-    List<LocalEntity> localList = new ArrayList<>();
+    //System.out.println("api 값 : " + sb);
+    List<Long> localList = new ArrayList<>();
     JSONParser jsonParser = new JSONParser();
     JSONObject jsonObject = (JSONObject) jsonParser.parse(sb.toString());
     JSONArray resultList = (JSONArray) jsonObject.get("resultList");
@@ -137,15 +138,15 @@ public class Common {
       JSONObject jsonObject1 = (JSONObject) next;
       //LocalVo localVo = new LocalVo();
       LocalEntity localVo = new LocalEntity();
-      localVo.setContentSeq(Long.parseLong(jsonObject1.get("contentSeq").toString()));
-      localVo.setAreaName((String) jsonObject1.get("areaName"));
+      localList.add(Long.parseLong(jsonObject1.get("contentSeq").toString()));
+      /*localVo.setAreaName((String) jsonObject1.get("areaName"));
       localVo.setPartName((String) jsonObject1.get("partName"));
       localVo.setTitle((String) jsonObject1.get("title"));
       localVo.setAddress((String) jsonObject1.get("address"));
       localVo.setLatitude((String) jsonObject1.get("latitude"));
       localVo.setLongitude((String) jsonObject1.get("longitude"));
-      localVo.setTel((String) jsonObject1.get("tel"));
-      localList.add(localVo);
+      localVo.setTel((String) jsonObject1.get("tel"));*/
+      //localList.add(localVo);
     }
     return localList;
   }
@@ -154,7 +155,7 @@ public class Common {
     this.location = location;
   }
 
-  public LocalDetailEntity localDetail() throws IOException, ParseException{
+  public JSONObject localDetail() throws IOException, ParseException{
     StringBuilder urlBuilder = new StringBuilder("https://www.pettravel.kr/api/detailSeqArea.do"); /*URL*/
     urlBuilder.append("?" + URLEncoder.encode("areaCode", StandardCharsets.UTF_8) + "="+ URLEncoder.encode(location, StandardCharsets.UTF_8));/*지역 코드*/
     urlBuilder.append("&" + URLEncoder.encode("contentNum", StandardCharsets.UTF_8) + "=" + URLEncoder.encode(
@@ -190,10 +191,12 @@ public class Common {
     //System.out.println("testt@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ = " + testt);
     
     if(testt != null) {
-      LocalDetailEntity localDetail1 = new LocalDetailEntity();
-      //System.out.println("testt = " + testt.get("contentSeq"));
-      //localDetail1.setContentSeq(Long.parseLong(jsonObject1.get("contentSeq").toString()));
-      localDetail1.setContentSeq(Long.parseLong(String.valueOf(testt.get("contentSeq"))));
+      return testt;
+      //LocalDetailEntity localDetail1 = new LocalDetailEntity();
+//      PlaceEntity localDetail1 = new PlaceEntity();
+//      //System.out.println("testt = " + testt.get("contentSeq"));
+//      //localDetail1.setContentSeq(Long.parseLong(jsonObject1.get("contentSeq").toString()));
+/*      localDetail1.setContentSeq(Long.parseLong(String.valueOf(testt.get("contentSeq"))));
       localDetail1.setKeyword((String) testt.get("keyword"));
       localDetail1.setUsedTime((String) testt.get("usedTime"));
       localDetail1.setHomePage((String) testt.get("homePage"));
@@ -210,15 +213,15 @@ public class Common {
       localDetail1.setBathFlag((String) testt.get("bathFlag"));
       localDetail1.setProvisionFlag((String) testt.get("provisionFlag"));
       localDetail1.setPetFlag((String) testt.get("petFlag"));
-      localDetail1.setPetWeight((String) testt.get("petWeight"));
+      localDetail1.setPetWeight(Integer.parseInt(String.valueOf(testt.get("petWeight"))));
       localDetail1.setDogBreed((String) testt.get("dogBreed"));
       localDetail1.setEmergencyFlag((String) testt.get("emergencyFlag"));
       localDetail1.setEntranceFlag((String) testt.get("entranceFlag"));
       localDetail1.setParkingFlag((String) testt.get("parkingFlag"));
       localDetail1.setInOutFlag((String) testt.get("inOutFlag"));
-      localDetail1.setMessage((String) testt.get("message"));
-      System.out.println("localDetail1 = " + localDetail1);
-      return localDetail1;
+      localDetail1.setMessage((String) testt.get("message"));*/
+//      System.out.println("localDetail1 = " + localDetail1);
+//      return localDetail1;
     }
     return null;
   }

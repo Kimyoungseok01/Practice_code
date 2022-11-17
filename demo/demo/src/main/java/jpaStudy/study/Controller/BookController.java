@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import jpaStudy.study.Entity.Author;
 import jpaStudy.study.Entity.Book;
+import jpaStudy.study.Entity.Lend;
 import jpaStudy.study.Entity.Member;
+import jpaStudy.study.Entity.PageRequest;
 import jpaStudy.study.Entity.ResponseJsonObject;
 import jpaStudy.study.Request.AuthorCreationRequest;
 import jpaStudy.study.Request.BookCreationRequest;
@@ -13,11 +15,13 @@ import jpaStudy.study.Request.BookLendRequest;
 import jpaStudy.study.Request.MemberCreationRequest;
 import jpaStudy.study.Service.LibraryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,6 +38,20 @@ public class BookController {
   private final LibraryService libraryService;
  //
   private ResponseJsonObject response;
+
+
+  @GetMapping("/bookPage")
+  public ResponseEntity<ResponseJsonObject> bookByPage(@ModelAttribute final PageRequest pageable){
+    Page<Book> books = libraryService.bookByPage(pageable);
+    response = ResponseJsonObject.builder()
+        .code(HttpStatus.OK.value())
+        .httpStatus(HttpStatus.OK)
+        .message("페이징처리 완료")
+        .data(books)
+        .build();
+    return ResponseEntity.ok()
+        .body(response);
+  }
 
   @GetMapping("/book")
   public ResponseEntity<ResponseJsonObject> readBooks(@RequestParam(required = false) String isbn){
@@ -119,13 +137,26 @@ public class BookController {
   }
 
   @GetMapping("/book/jpql")
-  public ResponseEntity<ResponseJsonObject> bookBySPQL(@RequestParam(required = false) String isbn,@RequestParam(required = false) String name){
+  public ResponseEntity<ResponseJsonObject> bookBySPQL(@ModelAttribute final PageRequest pageable){
+    Page<Book> books = libraryService.bookByDSLPage(pageable);
     response = ResponseJsonObject.builder()
         .code(HttpStatus.OK.value())
         .httpStatus(HttpStatus.OK)
         .message("JSQL Test")
-        .data(Arrays.asList(libraryService.bookBySPQL(isbn,name))).build();
+        .data(books).build();
     return new ResponseEntity<>(response,response.getHttpStatus());
   }
+  /*@GetMapping("/bookPage")
+  public ResponseEntity<ResponseJsonObject> bookByPage(@ModelAttribute final PageRequest pageable){
+    Page<Book> books = libraryService.bookByPage(pageable);
+    response = ResponseJsonObject.builder()
+        .code(HttpStatus.OK.value())
+        .httpStatus(HttpStatus.OK)
+        .message("페이징처리 완료")
+        .data(books)
+        .build();
+    return ResponseEntity.ok()
+        .body(response);
+  }*/
 
 }

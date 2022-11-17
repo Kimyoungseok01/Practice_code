@@ -1,8 +1,7 @@
 package com.gangwondog.core.test.common;
 
 import com.gangwondog.core.test.Entity.PlaceEntity;
-import com.gangwondog.core.test.vo.LocalDetailEntity;
-import com.gangwondog.core.test.vo.LocalEntity;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -137,7 +136,7 @@ public class Common {
       var next = iterator.next();
       JSONObject jsonObject1 = (JSONObject) next;
       //LocalVo localVo = new LocalVo();
-      LocalEntity localVo = new LocalEntity();
+      //LocalEntity localVo = new LocalEntity();
       localList.add(Long.parseLong(jsonObject1.get("contentSeq").toString()));
       /*localVo.setAreaName((String) jsonObject1.get("areaName"));
       localVo.setPartName((String) jsonObject1.get("partName"));

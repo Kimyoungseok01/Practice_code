@@ -1,4 +1,4 @@
-package jpaStudy.study.Repository;
+package jpaStudy.study.Repository.Book;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,15 +11,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository extends JpaRepository<Book, Long>,BookCustomRepository {
     Optional<Book> findByIsbn(String isbn);
 
     List<Book> findAllByOrderByIsbnDesc();
 
     List<Book> findByIsbnContaining(String isbn);
 
-    @Query("select b from Book b where (:isbn is null or b.isbn LIKE %:isbn%) or (:name is null or b.name like %:name%)")
-    List<Book> JPQLTest(@Param("isbn") String isbn, @Param("name")String name);
+   /* @Query("select b from Book b where (:isbn is null or b.isbn LIKE %:isbn%) or (:name is null or b.name like %:name%)")
+    List<Book> JPQLTest(@Param("isbn") String isbn, @Param("name")String name);*/
 
 
 }

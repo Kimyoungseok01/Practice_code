@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -33,7 +34,14 @@ public class FileEntity {
 
   @Column(name = "create_date")
   private Instant createDate;
-//
+
+  @Builder
+  public FileEntity(String useAt, Instant createDate) {
+    this.useAt = useAt;
+    this.createDate = createDate;
+  }
+
+  //
 //  @JsonBackReference
 //  @OneToMany(fetch = FetchType.LAZY)
 //  @JoinColumn(name = "id")

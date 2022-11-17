@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.vo;
 
 import javax.persistence.Column;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder // 빌더를 사용할 수 있게 함
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // 무분별한 객체 생성에 대해 한번 더 체크 가능
-@Entity(name="member") // 테이블 명을 작성
+//@Entity(name="member") // 테이블 명을 작성
 public class MemberEntity {
 
   @Id
@@ -40,3 +41,4 @@ public class MemberEntity {
     this.address = address;
   }
 }
+*/

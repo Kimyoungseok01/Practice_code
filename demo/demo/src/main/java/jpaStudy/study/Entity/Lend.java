@@ -51,4 +51,5 @@ public class Lend {
   @JoinColumn(name = "member_id")
   @JsonManagedReference
   Member member;
+
 }

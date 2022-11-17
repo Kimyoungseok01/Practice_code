@@ -1,19 +1,23 @@
 package com.gangwondog.core.test.web;
 
 import com.gangwondog.core.test.Entity.CommonCodeEntity;
+import com.gangwondog.core.test.Entity.FileDetailEntity;
+import com.gangwondog.core.test.Entity.FileEntity;
 import com.gangwondog.core.test.Entity.PlaceEntity;
 import com.gangwondog.core.test.common.Common;
-import com.gangwondog.core.test.repository.LocalDetailRepository;
-import com.gangwondog.core.test.repository.LocalRepository;
+/*import com.gangwondog.core.test.repository.LocalDetailRepository;
+import com.gangwondog.core.test.repository.LocalRepository;*/
 import com.gangwondog.core.test.repository.CommonCodeRepository;
+import com.gangwondog.core.test.repository.FileDetailRepository;
+import com.gangwondog.core.test.repository.FileRepository;
 import com.gangwondog.core.test.repository.PlaceRepository;
-import com.gangwondog.core.test.vo.LocalDetailEntity;
-import com.gangwondog.core.test.vo.LocalEntity;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,14 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class LocalController {
-
+/*
   private final LocalRepository localRepository;
 
-  private final LocalDetailRepository localDetailRepository;
+  private final LocalDetailRepository localDetailRepository;*/
 
   private final CommonCodeRepository commonCodeRepository;
 
   private final PlaceRepository placeRepository;
+
+  private final FileRepository fileRepository;
+
+  private final FileDetailRepository fileDetailRepository;
   @PostMapping(path = "/insertAll")
   public void insertAll()throws Exception{
     Common common  = new Common();
@@ -56,6 +64,7 @@ public class LocalController {
           Optional<CommonCodeEntity> partCode = commonCodeRepository.findByComCodeDescription(
               (String) localDetail.get("partName"));
           PlaceEntity localDetail1 = new PlaceEntity();
+          Long contentSeq = Long.parseLong(String.valueOf(localDetail.get("contentSeq")));
           localDetail1.setContentSeq(Long.parseLong(String.valueOf(localDetail.get("contentSeq"))));
           localDetail1.setAreaCode(areaCode.get());
           localDetail1.setPartCode(partCode.get());
@@ -80,11 +89,7 @@ public class LocalController {
           localDetail1.setBathFlag((String) localDetail.get("bathFlag"));
           localDetail1.setProvisionFlag((String) localDetail.get("provisionFlag"));
           localDetail1.setPetFlag((String) localDetail.get("petFlag"));
-          if(!localDetail.get("petWeight").equals("")){
-          localDetail1.setPetWeight(Integer.parseInt(String.valueOf(localDetail.get("petWeight"))));
-          }else {
-            localDetail1.setPetWeight(null);
-          }
+          localDetail1.setPetWeight((String) localDetail.get("petWeight"));
           localDetail1.setDogBreed((String) localDetail.get("dogBreed"));
           localDetail1.setEmergencyFlag((String) localDetail.get("emergencyFlag"));
           localDetail1.setEntranceFlag((String) localDetail.get("entranceFlag"));
@@ -95,9 +100,43 @@ public class LocalController {
           localDetail1.setOwnAt("N");
           Instant current = Instant.now();
           localDetail1.setCreateDate(current);
-
+          JSONArray resultList = (JSONArray) localDetail.get("imageList");
+          if(resultList.get(0).toString().length() > 20){
+          FileEntity file = FileEntity.builder()
+              .useAt("Y")
+              .createDate(current).build();
+          fileRepository.save(file).getId();
+          localDetail1.setFileId(file);
+          //placeRepository.updateFile(contentSeq,id);
+            //System.out.println("id = " + id);
+//            Iterator iterator = resultList.iterator();
+//            while (iterator.hasNext()){
+//              var object = iterator.next();
+//              JSONObject jsonObject = (JSONObject) object;
+//              String image = jsonObject.get("image").toString();
+//              System.out.println("image = " + image);
+//
+//            }
+          for(int q = 0; q<resultList.size(); q++){
+            JSONObject jsonObject = (JSONObject) resultList.get(q);
+            String image = jsonObject.get("image").toString();
+            int num = image.indexOf("/list/");
+            String fileName = image.substring(image.lastIndexOf("list/")+5);
+            String url = image.substring(0,num+6);
+            FileDetailEntity fileDetailEntity = FileDetailEntity.builder()
+                .fileId(file)
+                .orders(q)
+                .fileName(fileName)
+                .url(url)
+                .ownAt("N")
+                .createDate(current).build();
+            fileDetailRepository.save(fileDetailEntity);
+            }
+          }
           placeRepository.save(localDetail1);
+
         }
+
       }
 
 /*      for(var t:list){
@@ -188,6 +227,7 @@ public class LocalController {
     return getSeq.size();
   }*/
 
+/*
   @GetMapping("/getLocal")
   public List<LocalEntity> localEntities(){
     return localRepository.findAll();
@@ -197,6 +237,7 @@ public class LocalController {
   public List<LocalDetailEntity> localDetailRepositories(){
     return localDetailRepository.findAll();
   }
+*/
 
 
 

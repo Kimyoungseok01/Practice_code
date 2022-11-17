@@ -3,7 +3,6 @@ package jpaStudy.study.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
@@ -11,12 +10,13 @@ import jpaStudy.study.Entity.Author;
 import jpaStudy.study.Entity.Book;
 import jpaStudy.study.Entity.Lend;
 import jpaStudy.study.Entity.Member;
+import jpaStudy.study.Entity.PageRequest;
 import jpaStudy.study.Enum.LendStatus;
 import jpaStudy.study.Enum.MemberStatus;
 import jpaStudy.study.Exception.ErrorCode;
 import jpaStudy.study.Exception.NotFoundEntityException;
 import jpaStudy.study.Repository.AuthorRepository;
-import jpaStudy.study.Repository.BookRepository;
+import jpaStudy.study.Repository.Book.BookRepository;
 import jpaStudy.study.Repository.LendRepository;
 import jpaStudy.study.Repository.MemberRepository;
 import jpaStudy.study.Request.AuthorCreationRequest;
@@ -26,6 +26,7 @@ import jpaStudy.study.Request.MemberCreationRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,12 @@ public class LibraryService {
   private final LendRepository lendRepository;
   private final BookRepository bookRepository;
 
+  public Page<Book> bookByPage(PageRequest pageable){
+    Page<Book> books = bookRepository.findAll(pageable.of("id"));
+    Optional<Page<Book>> books1 = Optional.of(bookRepository.findAll(pageable.of("id")));
+    //Optional<Page<Book>> books1 = bookRepository.findAll(pageable.of());
+    return books;
+  }
   public Book readBookById(Long id){
     /*Optional<Book> book = bookRepository.findById(id); //Optional 객체를 사용하면 NPE 를 처라하기 편하다
     if(book.isPresent()){  //.isPresent 는 boolean 값으로 리턴해줌
@@ -57,11 +64,14 @@ public class LibraryService {
   }
 
   public Book readBookByIsbn(String isbn){
-    Optional<Book> book = bookRepository.findByIsbn(isbn);
-    if(book.isPresent()){
-      return book.get();
-    }
-    throw new EntityNotFoundException ("Cant find any book under given ID");
+    Book book = bookRepository.findByIsbn(isbn)
+        .orElseThrow(() -> new EntityNotFoundException("Cant find any book under given Id"));
+    return book;
+//    Optional<Book> book = bookRepository.findByIsbn(isbn);
+//    if(book.isPresent()){
+//      return book.get();
+//    }
+//    throw new EntityNotFoundException ("Cant find any book under given ID");
   }
 
   public Book createBook(BookCreationRequest book){
@@ -112,38 +122,44 @@ public class LibraryService {
   @Transactional
   public List<String> lendABook(BookLendRequest request){
     List<String> bookApprovedToBurrow = new ArrayList<>();
-    Optional<Member> memberForId =
-        memberRepository.findById(request.getMemberId());
-    if(!memberForId.isPresent()){
-      throw new EntityNotFoundException("Member not present in the database ==" + request.getMemberId());
-    }
-    if (memberForId.get().getStatus() != MemberStatus.ACTIVE) {
+//    Member memberForId =
+//        memberRepository.findById(request.getMemberId())
+//            .orElseThrow(() -> new EntityNotFoundException("Member not present in the database ==" + request.getMemberId()));
+    Member memberForId =
+        memberRepository.findById(request.getMemberId())
+            .orElseThrow(() -> new EntityNotFoundException());
+    if (memberForId.getStatus() != MemberStatus.ACTIVE) {
       throw new RuntimeException("User is not active to proceed a lending");
     }
-    Iterator iterator = request.getBookIds().iterator();
+
+/*    Iterator iterator = request.getBookIds().iterator();
     while (iterator.hasNext()){
       Long getBookId = (Long) iterator.next();
       Optional<Book> bookForId =
           bookRepository.findById(getBookId);
       if(!bookForId.isPresent()){
         throw new EntityNotFoundException("Cant find any book under given ID" + bookForId);
-      }
+      }*/
 
-      Optional<Lend> burrowedBook =
-          lendRepository.findByBookAndStatus(bookForId.get(), LendStatus.BURROWED);
-      if(!burrowedBook.isPresent()){
-        bookApprovedToBurrow.add(bookForId.get().getName());
-        Lend lend = new Lend();
-        lend.setMember(memberForId.get());
-        lend.setBook(bookForId.get());
-        lend.setStatus(LendStatus.BURROWED);
-        lend.setStartOn(Instant.now());
-        lend.setDueOn(Instant.now().plus(30, ChronoUnit.DAYS));
+      request.getBookIds().stream().forEach(x -> {
+        Book bookForId = bookRepository.findById(x)
+            .orElseThrow(() -> new EntityNotFoundException("Cant find any book under given ID" + x));
+        Optional<Lend> bookLend = lendRepository.findByBookAndStatus(bookForId,LendStatus.BURROWED);
+        if(!bookLend.isPresent()){
+        Lend lend = Lend.builder()
+            .member(memberForId)
+            .book(bookForId)
+            .status(LendStatus.BURROWED)
+            .startOn(Instant.now())
+            .dueOn(Instant.now().plus(30, ChronoUnit.DAYS))
+            .build();
         lendRepository.save(lend);
-      } else if (burrowedBook.isPresent()) {
-        bookApprovedToBurrow.add(bookForId.get().getName()+" == is Borrowed");
-      }
-    }
+        bookApprovedToBurrow.add(bookForId.getName()+" == is Borrowed");
+        }else {
+          throw new EntityNotFoundException("This BookId is Burrowed " + bookForId.getName());
+        }
+      });
+
     return bookApprovedToBurrow;
   }
 
@@ -157,8 +173,21 @@ public class LibraryService {
   }
 
   public List<Book> bookBySPQL(String isbn,String name){
-    return bookRepository.JPQLTest(isbn,name);
+    //return bookRepository.JPQLTest(isbn,name);
+    return bookRepository.JPQLTest();
   }
 
+  public Page<Book> bookByDSLPage(PageRequest pageable){
+    Page<Book> books = bookRepository.bookByDSLPage(pageable.of("id"));
+    Page<Book> books1 = Optional.of(bookRepository.bookByDSLPage(pageable.of("id")))
+        .orElseThrow(() -> new RuntimeException("책이 없어용"));
+    return books1;
+  }
 
+  /*public Page<Book> bookByPage(PageRequest pageable){
+    Page<Book> books = bookRepository.findAll(pageable.of("id"));
+    Optional<Page<Book>> books1 = Optional.of(bookRepository.findAll(pageable.of("id")));
+    //Optional<Page<Book>> books1 = bookRepository.findAll(pageable.of());
+    return books;
+  }*/
 }

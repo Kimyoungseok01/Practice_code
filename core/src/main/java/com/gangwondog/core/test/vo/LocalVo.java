@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.vo;
 
 import lombok.Data;
@@ -94,3 +95,4 @@ public class LocalVo {
     this.tel = tel;
   }
 }
+*/

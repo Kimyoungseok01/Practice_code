@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.repository;
 
 import com.gangwondog.core.test.vo.LocalEntity;
@@ -20,3 +21,4 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
 
 }
+*/

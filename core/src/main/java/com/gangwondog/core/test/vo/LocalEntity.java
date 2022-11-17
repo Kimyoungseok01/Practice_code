@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.vo;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ import net.bytebuddy.dynamic.loading.InjectionClassLoader.Strategy;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Entity(name = "local")
+//@Entity(name = "local")
 public class LocalEntity {
 
   @Id
@@ -49,3 +50,4 @@ public class LocalEntity {
   @Column(nullable = false, length = 30)
   private String tel;
 }
+*/

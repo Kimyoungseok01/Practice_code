@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.web;
 
 import com.gangwondog.core.test.repository.MemberRepository;
@@ -40,3 +41,4 @@ public class MemberController {
   }
 
 }
+*/

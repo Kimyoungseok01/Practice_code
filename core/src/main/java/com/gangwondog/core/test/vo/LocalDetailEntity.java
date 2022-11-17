@@ -1,3 +1,4 @@
+/*
 package com.gangwondog.core.test.vo;
 
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Entity(name = "localDetail")
+//@Entity(name = "localDetail")
 public class LocalDetailEntity {
 
   @Id
@@ -98,3 +99,4 @@ public class LocalDetailEntity {
 
 
 }
+*/

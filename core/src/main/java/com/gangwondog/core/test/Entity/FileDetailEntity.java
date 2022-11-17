@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -30,8 +31,8 @@ public class FileDetailEntity {
   @ManyToOne
   private FileEntity fileId;
 
-  @Column(name = "order")
-  private Integer order;
+  @Column(name = "orders")
+  private Integer orders;
 
   @Column(name = "file_name")
   private String fileName;
@@ -51,4 +52,16 @@ public class FileDetailEntity {
   @Column(name = "create_date")
   private Instant createDate;
 
+  @Builder
+  public FileDetailEntity(FileEntity fileId, Integer orders, String fileName, String originFileName,
+      String url, Integer size, String ownAt, Instant createDate) {
+    this.fileId = fileId;
+    this.orders = orders;
+    this.fileName = fileName;
+    //this.originFileName = originFileName;
+    this.url = url;
+    //this.size = size;
+    this.ownAt = ownAt;
+    this.createDate = createDate;
+  }
 }

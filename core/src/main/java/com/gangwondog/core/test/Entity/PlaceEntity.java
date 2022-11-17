@@ -111,7 +111,7 @@ public class PlaceEntity {
   private String petFlag;
 
   @Column(name = "pet_weight")
-  private Integer petWeight;
+  private String petWeight;
 
   @Column(name = "dog_breed")
   private String dogBreed;
@@ -140,51 +140,5 @@ public class PlaceEntity {
   @Column(name = "create_date")
   private Instant createDate;
 
-  @Builder
-  public PlaceEntity(Long contentSeq, CommonCodeEntity areaCode, CommonCodeEntity partCode,
-      String title, String address, String latitude, String longitude, String tel, String keyword,
-      String usedTime, String homePage, String content, FileEntity fileId, String provisionSupply,
-      String petFacility, String restaurant, String parkingLog, String mainFacility,
-      String usedCost,
-      String policyCautions, String emergencyResponse, String memo, String bathFlag,
-      String provisionFlag, String petFlag, Integer petWeight, String dogBreed,
-      String emergencyFlag,
-      String entranceFlag, String parkingFlag, String inOutFlag, String message, Integer readCount,
-      String ownAt, Instant createDate) {
-    this.contentSeq = contentSeq;
-    this.areaCode = areaCode;
-    this.partCode = partCode;
-    this.title = title;
-    this.address = address;
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.tel = tel;
-    this.keyword = keyword;
-    this.usedTime = usedTime;
-    this.homePage = homePage;
-    this.content = content;
-    this.fileId = fileId;
-    this.provisionSupply = provisionSupply;
-    this.petFacility = petFacility;
-    this.restaurant = restaurant;
-    this.parkingLog = parkingLog;
-    this.mainFacility = mainFacility;
-    this.usedCost = usedCost;
-    this.policyCautions = policyCautions;
-    this.emergencyResponse = emergencyResponse;
-    this.memo = memo;
-    this.bathFlag = bathFlag;
-    this.provisionFlag = provisionFlag;
-    this.petFlag = petFlag;
-    this.petWeight = petWeight;
-    this.dogBreed = dogBreed;
-    this.emergencyFlag = emergencyFlag;
-    this.entranceFlag = entranceFlag;
-    this.parkingFlag = parkingFlag;
-    this.inOutFlag = inOutFlag;
-    this.message = message;
-    this.readCount = readCount;
-    this.ownAt = ownAt;
-    this.createDate = createDate;
-  }
+
 }
